@@ -193,18 +193,16 @@ namespace DTCommandPalette {
             subtitleStyle.fontSize = (int)(subtitleStyle.fontSize * 1.2f);
 
             int currentIndex = 0;
-            for (int i = 0; i < displayedAssetCount;) {
-                ICommand obj = CommandPaletteWindow._objects[currentIndex];
-
-                currentIndex++;
+            for (int i = 0; i < displayedAssetCount; i++) {
+                ICommand obj = CommandPaletteWindow._objects[i];
 
                 if (!obj.IsValid()) {
                     continue;
                 }
 
-                float topY = CommandPaletteWindow.kWindowHeight + CommandPaletteWindow.kRowHeight * i;
+                float topY = CommandPaletteWindow.kWindowHeight + CommandPaletteWindow.kRowHeight * currentIndex;
 
-                if (i == CommandPaletteWindow._selectedIndex) {
+                if (currentIndex == CommandPaletteWindow._selectedIndex) {
                     EditorGUI.DrawRect(new Rect(0.0f, topY, CommandPaletteWindow.kWindowWidth, CommandPaletteWindow.kRowHeight), CommandPaletteWindow._selectedBackgroundColor);
                 }
 
@@ -221,10 +219,11 @@ namespace DTCommandPalette {
 
                 GUIStyle textureStyle = new GUIStyle();
                 textureStyle.normal.background = obj.DisplayIcon;
-                EditorGUI.LabelField(new Rect(CommandPaletteWindow.kWindowWidth - CommandPaletteWindow.kIconEdgeSize - CommandPaletteWindow.kIconPadding, topY + CommandPaletteWindow.kIconPadding, CommandPaletteWindow.kIconEdgeSize, CommandPaletteWindow.kIconEdgeSize),
-                GUIContent.none,
-                textureStyle);
-                i++;
+                EditorGUI.LabelField(new Rect(CommandPaletteWindow.kWindowWidth - CommandPaletteWindow.kIconEdgeSize - CommandPaletteWindow.kIconPadding, topY + CommandPaletteWindow.kIconPadding, CommandPaletteWindow.kIconEdgeSize, CommandPaletteWindow.kIconEdgeSize), GUIContent.none, textureStyle);
+
+                // NOTE (darren): we only increment currentIndex if we draw the object
+                // because it is used for positioning the UI
+                currentIndex++;
             }
         }
 
