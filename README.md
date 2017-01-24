@@ -2,7 +2,7 @@
 Command palette for Unity - run methods, open scenes, and more!
 
 ### To install:
-Clone the git repository and add it to your Unity project.
+Clone the git repository and add the entire folder to your Unity project.
 
 ### Supported Versions:
 Tested on Unity 5.4. It will probably work on other similar versions..
@@ -13,7 +13,7 @@ Open..
 `%t (Cmd-T on Mac / Control-T on Windows)`
 * Open Scenes
 * Select GameObjects in the Scene
-* Open Prefabs (requires [PrefabSandbox](https://github.com/DarrenTsung/DTCoreModule))
+* Open Prefabs (requires [PrefabSandbox](https://github.com/DarrenTsung/DTPrefabSandbox))
 
 ![OpenScreenshot](OpenScreenshot.png)
 

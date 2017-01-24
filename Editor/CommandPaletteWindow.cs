@@ -124,7 +124,7 @@ namespace DTCommandPalette {
         }
 
         private void HandleInputUpdated() {
-            this.ReparseInput();
+            ReparseInput();
             CommandPaletteWindow._selectedIndex = 0;
             CommandPaletteWindow.ReloadObjects();
         }
