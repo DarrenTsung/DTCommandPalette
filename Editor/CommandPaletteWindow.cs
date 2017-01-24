@@ -154,34 +154,39 @@ namespace DTCommandPalette {
         private void HandleKeyDownEvent(Event e) {
             switch (e.keyCode) {
                 case KeyCode.Escape:
-                this.CloseIfNotClosing();
-                break;
+                    this.CloseIfNotClosing();
+                    break;
                 case KeyCode.Return:
-                ICommand obj = CommandPaletteWindow._objects[CommandPaletteWindow._selectedIndex];
-                if (CommandPaletteWindow._parsedArguments != null) {
-                    ICommandWithArguments castedObj;
-                    try {
-                        castedObj = (ICommandWithArguments)obj;
-                        castedObj.Execute(CommandPaletteWindow._parsedArguments);
-                    } catch (InvalidCastException) {
-                        Debug.LogWarning("Attempted to pass arguments to CommandObject, but object does not allow arguments!");
-                        obj.Execute();
-                    }
-                } else {
-                    obj.Execute();
-                }
-                this.CloseIfNotClosing();
-                break;
+                    ICommand obj = CommandPaletteWindow._objects[CommandPaletteWindow._selectedIndex];
+
+                    var parsedArguments = CommandPaletteWindow._parsedArguments;
+                    EditorApplication.delayCall += () => {
+                        if (parsedArguments != null) {
+                            ICommandWithArguments castedObj;
+                            try {
+                                castedObj = (ICommandWithArguments)obj;
+                                castedObj.Execute(parsedArguments);
+                            } catch (InvalidCastException) {
+                                Debug.LogWarning("Attempted to pass arguments to CommandObject, but object does not allow arguments!");
+                                obj.Execute();
+                            }
+                        } else {
+                            obj.Execute();
+                        }
+                    };
+
+                    this.CloseIfNotClosing();
+                    break;
                 case KeyCode.DownArrow:
-                CommandPaletteWindow._selectedIndex++;
-                e.Use();
-                break;
+                    CommandPaletteWindow._selectedIndex++;
+                    e.Use();
+                    break;
                 case KeyCode.UpArrow:
-                CommandPaletteWindow._selectedIndex--;
-                e.Use();
-                break;
+                    CommandPaletteWindow._selectedIndex--;
+                    e.Use();
+                    break;
                 default:
-                break;
+                    break;
             }
         }
 
