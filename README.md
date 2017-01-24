@@ -23,6 +23,3 @@ Command Palette
 * Run commands (any method with [MethodCommand] attribute can be run)
 
 ![MethodScreenshot](MethodScreenshot.png)
-
-### Known Issues:
-* Doesn't match Unity-Free skin
