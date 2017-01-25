@@ -10,7 +10,8 @@ namespace DTCommandPalette {
     [InitializeOnLoad]
     public class MethodCommandLoader : ICommandLoader {
         // PRAGMA MARK - Static
-        private static ICommand[] methodObjects = new ICommand[0];
+        private static List<ICommand> _staticCommands = new List<ICommand>();
+        private static Dictionary<Type, List<ICommand>> _instanceMethodCommandMap = new Dictionary<Type, List<ICommand>>();
 
         static MethodCommandLoader() {
             var thread = new Thread(LoadMethodCommands);
@@ -18,7 +19,7 @@ namespace DTCommandPalette {
         }
 
         private static void LoadMethodCommands() {
-            List<ICommand> objects = new List<ICommand>();
+            List<MethodCommand> methodCommands = new List<MethodCommand>();
 
             List<Assembly> assemblies = new List<Assembly>();
             // Editor Assembly
@@ -35,23 +36,46 @@ namespace DTCommandPalette {
                             continue;
                         }
 
-                        MethodCommand openable = new MethodCommand(new MethodCommandConfig {
+                        MethodCommand command = new MethodCommand(new MethodCommandConfig {
                             methodInfo = method,
                             classType = t,
                             methodDisplayName = attr.methodDisplayName
                         });
-                        objects.Add(openable);
+
+                        if (command.IsStatic) {
+                            _staticCommands.Add(command);
+                        } else {
+                            _instanceMethodCommandMap.GetAndCreateIfNotFound(t).Add(command);
+                        }
                     }
                 }
             }
-
-            MethodCommandLoader.methodObjects = objects.ToArray();
         }
 
 
         // PRAGMA MARK - ICommandLoader
         public ICommand[] Load() {
-            return MethodCommandLoader.methodObjects;
+            var commands = new List<ICommand>(_staticCommands);
+
+            var typeHashSet = new HashSet<Type>();
+            var componentsOnActive = Selection.activeGameObject.GetComponents(typeof(UnityEngine.Component));
+            foreach (var component in componentsOnActive) {
+                var componentType = component.GetType();
+                if (typeHashSet.Contains(componentType)) {
+                    continue;
+                }
+
+                typeHashSet.Add(componentType);
+
+                var methodCommands = _instanceMethodCommandMap.GetValueOrDefault(componentType);
+                if (methodCommands == null) {
+                    continue;
+                }
+
+                commands.AddRange(methodCommands);
+            }
+
+            return commands.ToArray();
         }
     }
 }

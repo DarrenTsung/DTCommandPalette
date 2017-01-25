@@ -58,7 +58,15 @@ namespace DTCommandPalette {
         }
 
 
-        // PRAGMA MARK - Constructors
+        // PRAGMA MARK - Public Interface
+        public bool IsStatic {
+            get { return _method.IsStatic; }
+        }
+
+        public Type ClassType {
+            get { return _classType; }
+        }
+
         public MethodCommand(MethodCommandConfig config) {
             _method = config.methodInfo;
             _methodDisplayName = config.methodDisplayName ?? _method.Name;
@@ -72,15 +80,26 @@ namespace DTCommandPalette {
         protected string _methodDisplayName;
 
         private void ExecuteInteral(object[] args = null) {
-            if (_method.IsStatic) {
+            if (IsStatic) {
                 _method.Invoke(null, args ?? new object[0]);
-            } else {
-                UnityEngine.Object[] objects = UnityEngine.Object.FindObjectsOfType(_classType);
-                if (objects.Length > 0) {
-                    _method.Invoke(objects[0], args ?? new object[0]);
-                } else {
-                    Debug.LogWarning("MethodCommand: instance method couldn't find UnityEngine.Object instance matching type");
+            } else if (typeof(UnityEngine.Component).IsAssignableFrom(_classType)) {
+                var activeGameObject = Selection.activeGameObject;
+                if (activeGameObject == null) {
+                    Debug.LogWarning("MethodCommand: cannot run method without selected game object!");
+                    return;
                 }
+
+                UnityEngine.Component classTypeComponent = activeGameObject.GetComponent(_classType);
+                if (classTypeComponent == null) {
+                    Debug.LogWarning("MethodCommand: failed to grab component of type: " + _classType.Name + " :from selected game object!");
+                    return;
+                }
+
+                _method.Invoke(classTypeComponent, args ?? new object[0]);
+                SceneView.RepaintAll();
+                EditorUtility.SetDirty(classTypeComponent);
+            } else {
+                Debug.LogWarning("MethodCommand: instance method not assignable to UnityEngine.Component has no way to be run!");
             }
         }
     }
