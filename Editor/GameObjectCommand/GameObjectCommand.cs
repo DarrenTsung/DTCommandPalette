@@ -7,12 +7,18 @@ namespace DTCommandPalette {
         // PRAGMA MARK - ICommand
         public string DisplayTitle {
             get {
+                if (!IsValid()) {
+                    return "";
+                }
                 return _obj.name;
             }
         }
 
         public string DisplayDetailText {
             get {
+                if (!IsValid()) {
+                    return "";
+                }
                 return _obj.FullName();
             }
         }
