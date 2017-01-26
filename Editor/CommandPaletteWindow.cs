@@ -130,6 +130,10 @@ namespace DTCommandPalette {
         }
 
         private static void ReloadObjects() {
+            if (CommandPaletteWindow._openableObjectManager == null) {
+                return;
+            }
+
             CommandPaletteWindow._objects = CommandPaletteWindow._openableObjectManager.ObjectsSortedByMatch(CommandPaletteWindow._parsedSearchInput);
         }
 

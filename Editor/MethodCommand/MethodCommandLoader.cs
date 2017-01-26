@@ -68,22 +68,25 @@ namespace DTCommandPalette {
         public ICommand[] Load() {
             var commands = new List<ICommand>(_staticCommands);
 
-            var typeHashSet = new HashSet<Type>();
-            var componentsOnActive = Selection.activeGameObject.GetComponents(typeof(UnityEngine.Component));
-            foreach (var component in componentsOnActive) {
-                var componentType = component.GetType();
-                if (typeHashSet.Contains(componentType)) {
-                    continue;
+            if (Selection.activeGameObject != null) {
+                var typeHashSet = new HashSet<Type>();
+
+                var componentsOnActive = Selection.activeGameObject.GetComponents(typeof(UnityEngine.Component));
+                foreach (var component in componentsOnActive) {
+                    var componentType = component.GetType();
+                    if (typeHashSet.Contains(componentType)) {
+                        continue;
+                    }
+
+                    typeHashSet.Add(componentType);
+
+                    var methodCommands = _instanceMethodCommandMap.GetValueOrDefault(componentType);
+                    if (methodCommands == null) {
+                        continue;
+                    }
+
+                    commands.AddRange(methodCommands);
                 }
-
-                typeHashSet.Add(componentType);
-
-                var methodCommands = _instanceMethodCommandMap.GetValueOrDefault(componentType);
-                if (methodCommands == null) {
-                    continue;
-                }
-
-                commands.AddRange(methodCommands);
             }
 
             return commands.ToArray();
