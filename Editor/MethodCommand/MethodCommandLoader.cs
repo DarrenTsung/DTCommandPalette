@@ -10,24 +10,35 @@ namespace DTCommandPalette {
     [InitializeOnLoad]
     public class MethodCommandLoader : ICommandLoader {
         // PRAGMA MARK - Static
+        private static readonly HashSet<string> k_CheckedAssemblyNames = new HashSet<string>() {
+            "Assembly-CSharp",
+            "Assembly-CSharp-firstpass",
+            "Assembly-CSharp-Editor",
+            "Assembly-CSharp-Editor-firstpass",
+            "Assembly-UnityScript",
+            "Assembly-UnityScript-firstpass",
+            "Assembly-UnityScript-Editor",
+            "Assembly-UnityScript-Editor-firstpass",
+        };
+
         private static List<ICommand> _staticCommands = new List<ICommand>();
         private static Dictionary<Type, List<ICommand>> _instanceMethodCommandMap = new Dictionary<Type, List<ICommand>>();
 
         static MethodCommandLoader() {
-            var thread = new Thread(LoadMethodCommands);
-            thread.Start();
+            EditorApplication.delayCall += () => {
+                var thread = new Thread(LoadMethodCommands);
+                thread.IsBackground = true;
+                thread.Start();
+            };
         }
 
         private static void LoadMethodCommands() {
-            List<MethodCommand> methodCommands = new List<MethodCommand>();
+            foreach (Assembly a in AppDomain.CurrentDomain.GetAssemblies()) {
+                string assemblyName = a.GetName().Name;
+                if (!k_CheckedAssemblyNames.Contains(assemblyName)) {
+                    continue;
+                }
 
-            List<Assembly> assemblies = new List<Assembly>();
-            // Editor Assembly
-            assemblies.Add(Assembly.GetAssembly(typeof(MethodCommandLoader)));
-            // Runtime Assembly
-            assemblies.Add(Assembly.GetAssembly(typeof(MethodCommandAttribute)));
-
-            foreach (Assembly a in assemblies) {
                 foreach (Type t in a.GetTypes()) {
                     var methods = t.GetMethods(BindingFlags.Static | BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
                     foreach (MethodInfo method in methods) {
