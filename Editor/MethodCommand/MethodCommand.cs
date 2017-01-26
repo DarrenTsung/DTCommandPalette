@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using UnityEditor;
 using UnityEngine;
@@ -80,8 +81,13 @@ namespace DTCommandPalette {
         protected string _methodDisplayName;
 
         private void ExecuteInteral(object[] args = null) {
+            args = args ?? new object[0];
+
+            var defaultArgs = _method.GetParameters().Skip(args == null ? 0 : args.Length).Select(a => a.IsOptional ? a.DefaultValue : null);
+            object[] allArgs = args.Concat(defaultArgs).ToArray();
+
             if (IsStatic) {
-                _method.Invoke(null, args ?? new object[0]);
+                _method.Invoke(null, allArgs);
             } else if (typeof(UnityEngine.Component).IsAssignableFrom(_classType)) {
                 var activeGameObject = Selection.activeGameObject;
                 if (activeGameObject == null) {
@@ -95,7 +101,7 @@ namespace DTCommandPalette {
                     return;
                 }
 
-                _method.Invoke(classTypeComponent, args ?? new object[0]);
+                _method.Invoke(classTypeComponent, allArgs);
                 SceneView.RepaintAll();
                 EditorUtility.SetDirty(classTypeComponent);
             } else {
