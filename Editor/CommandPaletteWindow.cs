@@ -24,7 +24,7 @@ namespace DTCommandPalette {
         private const int kSubtitleMaxSoftLength = 35;
         private const int kSubtitleMaxTitleAdditiveLength = 15;
 
-        private const float kIconEdgeSize = 17.0f;
+        private const float kIconEdgeSize = 15.0f;
         private const float kIconPadding = 7.0f;
 
         private const int kFontSize = 20;
