@@ -33,15 +33,7 @@ namespace DTCommandPalette {
 
         public static string _scriptDirectory = null;
         public static string ScriptDirectory {
-            get {
-                if (CommandPaletteWindow._scriptDirectory == null) {
-                    CommandPaletteWindow window = ScriptableObject.CreateInstance<CommandPaletteWindow>();
-                    MonoScript script = MonoScript.FromScriptableObject(window);
-                    CommandPaletteWindow._scriptDirectory = Path.GetDirectoryName(AssetDatabase.GetAssetPath(script));
-                    ScriptableObject.DestroyImmediate(window);
-                }
-                return CommandPaletteWindow._scriptDirectory;
-            }
+            get { return ScriptableObjectEditorUtil.PathForScriptableObjectType<CommandPaletteWindow>(); }
         }
 
 
