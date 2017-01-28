@@ -16,7 +16,7 @@ namespace DTCommandPalette {
         private const float kWindowWidth = 400.0f;
         private const float kWindowHeight = 30.0f;
 
-        private const float kRowHeight = 30.0f;
+        private const float kRowHeight = 32.0f;
         private const float kRowTitleHeight = 20.0f;
         private const float kRowSubtitleHeightPadding = -5.0f;
         private const float kRowSubtitleHeight = 15.0f;
@@ -27,7 +27,7 @@ namespace DTCommandPalette {
         private const float kIconEdgeSize = 15.0f;
         private const float kIconPadding = 7.0f;
 
-        private const int kFontSize = 20;
+        private const int kFontSize = 21;
 
         public static string _scriptDirectory = null;
         public static string ScriptDirectory {
