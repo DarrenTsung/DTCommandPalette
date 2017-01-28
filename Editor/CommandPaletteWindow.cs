@@ -46,12 +46,12 @@ namespace DTCommandPalette {
         public static void ShowObjectWindow() {
             CommandPaletteWindow.InitializeWindow("Open.. ");
 
-            CommandPaletteWindow._openableObjectManager = new CommandManager();
+            CommandPaletteWindow._commandManager = new CommandManager();
             if (!Application.isPlaying) {
-                CommandPaletteWindow._openableObjectManager.AddLoader(new PrefabAssetCommandLoader());
-                CommandPaletteWindow._openableObjectManager.AddLoader(new SceneAssetCommandLoader());
+                CommandPaletteWindow._commandManager.AddLoader(new PrefabAssetCommandLoader());
+                CommandPaletteWindow._commandManager.AddLoader(new SceneAssetCommandLoader());
             }
-            CommandPaletteWindow._openableObjectManager.AddLoader(new SelectGameObjectCommandLoader());
+            CommandPaletteWindow._commandManager.AddLoader(new SelectGameObjectCommandLoader());
             CommandPaletteWindow.ReloadObjects();
         }
 
@@ -59,8 +59,8 @@ namespace DTCommandPalette {
         public static void ShowCommandPaletteWindow() {
             CommandPaletteWindow.InitializeWindow("Command Palette.. ");
 
-            CommandPaletteWindow._openableObjectManager = new CommandManager();
-            CommandPaletteWindow._openableObjectManager.AddLoader(new MethodCommandLoader());
+            CommandPaletteWindow._commandManager = new CommandManager();
+            CommandPaletteWindow._commandManager.AddLoader(new MethodCommandLoader());
             CommandPaletteWindow.ReloadObjects();
         }
 
@@ -80,7 +80,7 @@ namespace DTCommandPalette {
         protected static bool _isClosing = false;
         protected static int _selectedIndex = 0;
         protected static ICommand[] _objects = new ICommand[0];
-        protected static CommandManager _openableObjectManager = null;
+        protected static CommandManager _commandManager = null;
         protected static Color _selectedBackgroundColor = ColorUtil.HexStringToColor("#4976C2");
 
         private static string _parsedSearchInput = "";
@@ -130,11 +130,11 @@ namespace DTCommandPalette {
         }
 
         private static void ReloadObjects() {
-            if (CommandPaletteWindow._openableObjectManager == null) {
+            if (CommandPaletteWindow._commandManager == null) {
                 return;
             }
 
-            CommandPaletteWindow._objects = CommandPaletteWindow._openableObjectManager.ObjectsSortedByMatch(CommandPaletteWindow._parsedSearchInput);
+            CommandPaletteWindow._objects = CommandPaletteWindow._commandManager.ObjectsSortedByMatch(CommandPaletteWindow._parsedSearchInput);
         }
 
         private static void ReparseInput() {
@@ -197,6 +197,7 @@ namespace DTCommandPalette {
         private void DrawDropDown(int displayedAssetCount) {
             GUIStyle titleStyle = new GUIStyle(GUI.skin.label);
             titleStyle.fontStyle = FontStyle.Bold;
+            titleStyle.richText = true;
 
             GUIStyle subtitleStyle = new GUIStyle(GUI.skin.label);
             subtitleStyle.fontSize = 9;
