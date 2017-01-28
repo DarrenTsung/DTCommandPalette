@@ -72,6 +72,7 @@ namespace DTCommandPalette {
             EditorWindow window = EditorWindow.GetWindow(typeof(CommandPaletteWindow), utility: true, title: title, focus: true);
             window.position = new Rect(0.0f, 0.0f, CommandPaletteWindow.kWindowWidth, CommandPaletteWindow.kWindowHeight);
             window.CenterInMainEditorWindow();
+            window.wantsMouseMove = true;
 
             CommandPaletteWindow._selectedIndex = 0;
             CommandPaletteWindow._focusTrigger = true;
@@ -162,39 +163,21 @@ namespace DTCommandPalette {
         private void HandleKeyDownEvent(Event e) {
             switch (e.keyCode) {
                 case KeyCode.Escape:
-                    this.CloseIfNotClosing();
-                    break;
+                this.CloseIfNotClosing();
+                break;
                 case KeyCode.Return:
-                    ICommand command = CommandPaletteWindow._objects[CommandPaletteWindow._selectedIndex];
-
-                    var parsedArguments = CommandPaletteWindow._parsedArguments;
-                    EditorApplication.delayCall += () => {
-                        if (parsedArguments != null) {
-                            ICommandWithArguments castedObj;
-                            try {
-                                castedObj = (ICommandWithArguments)command;
-                                castedObj.Execute(parsedArguments);
-                            } catch (InvalidCastException) {
-                                Debug.LogWarning("Attempted to pass arguments to CommandObject, but object does not allow arguments!");
-                                command.Execute();
-                            }
-                        } else {
-                            command.Execute();
-                        }
-                    };
-
-                    this.CloseIfNotClosing();
-                    break;
+                ExecuteCommandAtIndex(CommandPaletteWindow._selectedIndex);
+                break;
                 case KeyCode.DownArrow:
-                    CommandPaletteWindow._selectedIndex++;
-                    e.Use();
-                    break;
+                CommandPaletteWindow._selectedIndex++;
+                e.Use();
+                break;
                 case KeyCode.UpArrow:
-                    CommandPaletteWindow._selectedIndex--;
-                    e.Use();
-                    break;
+                CommandPaletteWindow._selectedIndex--;
+                e.Use();
+                break;
                 default:
-                    break;
+                break;
             }
         }
 
@@ -220,8 +203,22 @@ namespace DTCommandPalette {
 
                 float topY = CommandPaletteWindow.kWindowHeight + CommandPaletteWindow.kRowHeight * currentIndex;
 
+                Rect rowRect = new Rect(0.0f, topY, CommandPaletteWindow.kWindowWidth, CommandPaletteWindow.kRowHeight);
+
+                Event e = Event.current;
+                if (e.type == EventType.MouseMove) {
+                    if (rowRect.Contains(e.mousePosition) && CommandPaletteWindow._selectedIndex != currentIndex) {
+                        CommandPaletteWindow._selectedIndex = currentIndex;
+                        Repaint();
+                    }
+                } else if (e.type == EventType.MouseDown && e.button == 0) {
+                    if (rowRect.Contains(e.mousePosition)) {
+                        ExecuteCommandAtIndex(currentIndex);
+                    }
+                }
+
                 if (currentIndex == CommandPaletteWindow._selectedIndex) {
-                    EditorGUI.DrawRect(new Rect(0.0f, topY, CommandPaletteWindow.kWindowWidth, CommandPaletteWindow.kRowHeight), CommandPaletteWindow._selectedBackgroundColor);
+                    EditorGUI.DrawRect(rowRect, CommandPaletteWindow._selectedBackgroundColor);
                 }
 
                 string title = command.DisplayTitle;
@@ -281,6 +278,33 @@ namespace DTCommandPalette {
                 CommandPaletteWindow._isClosing = true;
                 this.Close();
             }
+        }
+
+        private void ExecuteCommandAtIndex(int index) {
+            if (!_objects.ContainsIndex(index)) {
+                Debug.LogError("Can't execute command with index because out-of-bounds: " + index);
+                return;
+            }
+
+            ICommand command = CommandPaletteWindow._objects[index];
+
+            var parsedArguments = CommandPaletteWindow._parsedArguments;
+            EditorApplication.delayCall += () => {
+                if (parsedArguments != null) {
+                    ICommandWithArguments castedObj;
+                    try {
+                        castedObj = (ICommandWithArguments)command;
+                        castedObj.Execute(parsedArguments);
+                    } catch (InvalidCastException) {
+                        Debug.LogWarning("Attempted to pass arguments to CommandObject, but object does not allow arguments!");
+                        command.Execute();
+                    }
+                } else {
+                    command.Execute();
+                }
+            };
+
+            this.CloseIfNotClosing();
         }
     }
 }
