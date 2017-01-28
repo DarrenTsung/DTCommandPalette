@@ -27,6 +27,10 @@ namespace DTCommandPalette {
             get;
         }
 
+        public float SortingPriority {
+            get { return -0.5f; }
+        }
+
         public bool IsValid() {
             return _obj != null;
         }

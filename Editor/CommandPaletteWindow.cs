@@ -29,6 +29,8 @@ namespace DTCommandPalette {
 
         private const int kFontSize = 21;
 
+        public static bool _debug = false;
+
         public static string _scriptDirectory = null;
         public static string ScriptDirectory {
             get {
@@ -163,21 +165,21 @@ namespace DTCommandPalette {
                     this.CloseIfNotClosing();
                     break;
                 case KeyCode.Return:
-                    ICommand obj = CommandPaletteWindow._objects[CommandPaletteWindow._selectedIndex];
+                    ICommand command = CommandPaletteWindow._objects[CommandPaletteWindow._selectedIndex];
 
                     var parsedArguments = CommandPaletteWindow._parsedArguments;
                     EditorApplication.delayCall += () => {
                         if (parsedArguments != null) {
                             ICommandWithArguments castedObj;
                             try {
-                                castedObj = (ICommandWithArguments)obj;
+                                castedObj = (ICommandWithArguments)command;
                                 castedObj.Execute(parsedArguments);
                             } catch (InvalidCastException) {
                                 Debug.LogWarning("Attempted to pass arguments to CommandObject, but object does not allow arguments!");
-                                obj.Execute();
+                                command.Execute();
                             }
                         } else {
-                            obj.Execute();
+                            command.Execute();
                         }
                     };
 
@@ -211,9 +213,8 @@ namespace DTCommandPalette {
 
             int currentIndex = 0;
             for (int i = 0; i < displayedAssetCount; i++) {
-                ICommand obj = CommandPaletteWindow._objects[i];
-
-                if (!obj.IsValid()) {
+                ICommand command = CommandPaletteWindow._objects[i];
+                if (!command.IsValid()) {
                     continue;
                 }
 
@@ -223,8 +224,8 @@ namespace DTCommandPalette {
                     EditorGUI.DrawRect(new Rect(0.0f, topY, CommandPaletteWindow.kWindowWidth, CommandPaletteWindow.kRowHeight), CommandPaletteWindow._selectedBackgroundColor);
                 }
 
-                string title = obj.DisplayTitle;
-                string subtitle = obj.DisplayDetailText;
+                string title = command.DisplayTitle;
+                string subtitle = command.DisplayDetailText;
 
                 int subtitleMaxLength = Math.Min(CommandPaletteWindow.kSubtitleMaxSoftLength + title.Length, CommandPaletteWindow.kSubtitleMaxSoftLength + CommandPaletteWindow.kSubtitleMaxTitleAdditiveLength);
                 if (subtitle.Length > subtitleMaxLength + 2) {
@@ -249,11 +250,16 @@ namespace DTCommandPalette {
                 }
                 title = titleStringBuilder.ToString();
 
+                if (_debug) {
+                    double score = _commandManager.ScoreFor(command, _input);
+                    subtitle += string.Format(" (score: {0})", score.ToString("F2"));
+                }
+
                 EditorGUI.LabelField(new Rect(0.0f, topY, CommandPaletteWindow.kWindowWidth, CommandPaletteWindow.kRowTitleHeight), title, titleStyle);
                 EditorGUI.LabelField(new Rect(0.0f, topY + CommandPaletteWindow.kRowTitleHeight + CommandPaletteWindow.kRowSubtitleHeightPadding, CommandPaletteWindow.kWindowWidth, CommandPaletteWindow.kRowSubtitleHeight), subtitle, subtitleStyle);
 
                 GUIStyle textureStyle = new GUIStyle();
-                textureStyle.normal.background = obj.DisplayIcon;
+                textureStyle.normal.background = command.DisplayIcon;
                 EditorGUI.LabelField(new Rect(CommandPaletteWindow.kWindowWidth - CommandPaletteWindow.kIconEdgeSize - CommandPaletteWindow.kIconPadding, topY + CommandPaletteWindow.kIconPadding, CommandPaletteWindow.kIconEdgeSize, CommandPaletteWindow.kIconEdgeSize), GUIContent.none, textureStyle);
 
                 // NOTE (darren): we only increment currentIndex if we draw the object

@@ -14,6 +14,11 @@ namespace DTCommandPalette {
             get;
         }
 
+        // NOTE (darren): higher sorting priority => higher in list
+        float SortingPriority {
+            get;
+        }
+
         bool IsValid();
 
         void Execute();
