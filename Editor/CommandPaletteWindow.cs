@@ -1,7 +1,9 @@
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text;
 using UnityEditor;
 using UnityEngine;
 
@@ -81,7 +83,7 @@ namespace DTCommandPalette {
         protected static int _selectedIndex = 0;
         protected static ICommand[] _objects = new ICommand[0];
         protected static CommandManager _commandManager = null;
-        protected static Color _selectedBackgroundColor = ColorUtil.HexStringToColor("#4976C2");
+        protected static Color _selectedBackgroundColor = ColorUtil.HexStringToColor("#4076d3").WithAlpha(0.4f);
 
         private static string _parsedSearchInput = "";
         private static string[] _parsedArguments = null;
@@ -195,6 +197,11 @@ namespace DTCommandPalette {
         }
 
         private void DrawDropDown(int displayedAssetCount) {
+            HashSet<char> inputSet = new HashSet<char>();
+            foreach (char c in _input.ToLower()) {
+                inputSet.Add(c);
+            }
+
             GUIStyle titleStyle = new GUIStyle(GUI.skin.label);
             titleStyle.fontStyle = FontStyle.Bold;
             titleStyle.richText = true;
@@ -223,6 +230,24 @@ namespace DTCommandPalette {
                 if (subtitle.Length > subtitleMaxLength + 2) {
                     subtitle = ".." + subtitle.Substring(subtitle.Length - subtitleMaxLength);
                 }
+
+                string colorHex = EditorGUIUtility.isProSkin ? "#8e8e8e" : "#383838";
+
+                StringBuilder titleStringBuilder = new StringBuilder();
+                bool startedConsecutive = false;
+                bool finishedConsecutive = false;
+                foreach (char c in title) {
+                    if (!finishedConsecutive && inputSet.Contains(char.ToLower(c))) {
+                        startedConsecutive = true;
+                        titleStringBuilder.Append(c);
+                    } else {
+                        if (startedConsecutive) {
+                            finishedConsecutive = true;
+                        }
+                        titleStringBuilder.Append("<color=" + colorHex + ">" + c + "</color>");
+                    }
+                }
+                title = titleStringBuilder.ToString();
 
                 EditorGUI.LabelField(new Rect(0.0f, topY, CommandPaletteWindow.kWindowWidth, CommandPaletteWindow.kRowTitleHeight), title, titleStyle);
                 EditorGUI.LabelField(new Rect(0.0f, topY + CommandPaletteWindow.kRowTitleHeight + CommandPaletteWindow.kRowSubtitleHeightPadding, CommandPaletteWindow.kWindowWidth, CommandPaletteWindow.kRowSubtitleHeight), subtitle, subtitleStyle);
