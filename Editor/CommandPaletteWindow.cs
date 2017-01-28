@@ -12,12 +12,12 @@ namespace DTCommandPalette {
 
         private const int kMaxRowsDisplayed = 8;
         private const float kWindowWidth = 400.0f;
-        private const float kWindowHeight = 40.0f;
+        private const float kWindowHeight = 30.0f;
 
-        private const float kRowHeight = 35.0f;
+        private const float kRowHeight = 30.0f;
         private const float kRowTitleHeight = 20.0f;
         private const float kRowSubtitleHeightPadding = -5.0f;
-        private const float kRowSubtitleHeight = 20.0f;
+        private const float kRowSubtitleHeight = 15.0f;
 
         private const int kSubtitleMaxSoftLength = 35;
         private const int kSubtitleMaxTitleAdditiveLength = 15;
@@ -25,7 +25,7 @@ namespace DTCommandPalette {
         private const float kIconEdgeSize = 17.0f;
         private const float kIconPadding = 7.0f;
 
-        private const int kFontSize = 25;
+        private const int kFontSize = 20;
 
         public static string _scriptDirectory = null;
         public static string ScriptDirectory {
@@ -199,7 +199,7 @@ namespace DTCommandPalette {
             titleStyle.fontStyle = FontStyle.Bold;
 
             GUIStyle subtitleStyle = new GUIStyle(GUI.skin.label);
-            subtitleStyle.fontSize = (int)(subtitleStyle.fontSize * 1.2f);
+            subtitleStyle.fontSize = 9;
 
             int currentIndex = 0;
             for (int i = 0; i < displayedAssetCount; i++) {
