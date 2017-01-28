@@ -40,27 +40,34 @@ namespace DTCommandPalette {
         // PRAGMA MARK - Public Interface
         [MenuItem("Window/Open.. %t")]
         public static void ShowObjectWindow() {
-            CommandPaletteWindow.InitializeWindow("Open.. ");
-
-            CommandPaletteWindow._commandManager = new CommandManager();
+            var commandManager = new CommandManager();
             if (!Application.isPlaying) {
-                CommandPaletteWindow._commandManager.AddLoader(new PrefabAssetCommandLoader());
-                CommandPaletteWindow._commandManager.AddLoader(new SceneAssetCommandLoader());
+                commandManager.AddLoader(new PrefabAssetCommandLoader());
+                commandManager.AddLoader(new SceneAssetCommandLoader());
             }
-            CommandPaletteWindow._commandManager.AddLoader(new SelectGameObjectCommandLoader());
-            CommandPaletteWindow.ReloadObjects();
+            commandManager.AddLoader(new SelectGameObjectCommandLoader());
+
+            CommandPaletteWindow.InitializeWindow("Open.. ", commandManager);
         }
 
         [MenuItem("Window/Open Command Palette.. %#m")]
         public static void ShowCommandPaletteWindow() {
-            CommandPaletteWindow.InitializeWindow("Command Palette.. ");
+            var commandManager = new CommandManager();
+            commandManager.AddLoader(new MethodCommandLoader());
 
-            CommandPaletteWindow._commandManager = new CommandManager();
-            CommandPaletteWindow._commandManager.AddLoader(new MethodCommandLoader());
-            CommandPaletteWindow.ReloadObjects();
+            CommandPaletteWindow.InitializeWindow("Command Palette.. ", commandManager);
         }
 
-        public static void InitializeWindow(string title) {
+        public static void InitializeWindow(string title, CommandManager commandManager, bool clearInput = false) {
+            if (commandManager == null) {
+                Debug.LogError("CommandPaletteWindow: Can't initialize a window without a command manager!");
+                return;
+            }
+
+            if (clearInput) {
+                _input = "";
+            }
+
             EditorWindow window = EditorWindow.GetWindow(typeof(CommandPaletteWindow), utility: true, title: title, focus: true);
             window.position = new Rect(0.0f, 0.0f, CommandPaletteWindow.kWindowWidth, CommandPaletteWindow.kWindowHeight);
             window.CenterInMainEditorWindow();
@@ -69,6 +76,9 @@ namespace DTCommandPalette {
             CommandPaletteWindow._selectedIndex = 0;
             CommandPaletteWindow._focusTrigger = true;
             CommandPaletteWindow._isClosing = false;
+
+            _commandManager = commandManager;
+            CommandPaletteWindow.ReloadObjects();
         }
 
         // PRAGMA MARK - Internal
