@@ -13,7 +13,12 @@ namespace DTCommandPalette {
         public static readonly string kScriptingDefineSymbol = "DT_COMMAND_PALETTE";
 
         static CommandPaletteScriptingDefineInjector() {
-            PlayerSettingsUtil.AddScriptingDefineSymbolIfNotFound(BuildTargetGroup.iOS, kScriptingDefineSymbol);
+            EditorUserBuildSettings.activeBuildTargetChanged += RefreshScriptingDefineSymbolInjection;
+            RefreshScriptingDefineSymbolInjection();
+        }
+
+        private static void RefreshScriptingDefineSymbolInjection() {
+            PlayerSettingsUtil.AddScriptingDefineSymbolIfNotFound(EditorUserBuildSettings.selectedBuildTargetGroup, kScriptingDefineSymbol);
         }
     }
 }
