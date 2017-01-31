@@ -48,3 +48,26 @@ public class ExampleMonoBehaviour : MonoBehaviour {
   }
 }
 ```
+
+### Extending CommandPalette and Dependencies
+To help external developers with extending CommandPalette by writing their own specific ICommands, DTCommandPalette injects a compile flag named DT_COMMAND_PALETTE into your project automatically that you can use to wrap your extension classes.
+
+This means that you can write your code and have it be a soft (optional) dependency on DTCommandPalette instead of requiring DTCommandPalette to be imported into the project.
+
+Example (C#):
+```csharp
+using UnityEngine;
+
+#if DT_COMMAND_PALETTE
+using DTCommandPalette;
+#endif
+
+public static class ExampleClass {
+  #if DT_COMMAND_PALETTE
+  [MethodCommand]
+  #endif
+  public static void DeletePlayerPrefs() {
+    PlayerPrefs.DeleteAll();
+  }
+}
+```
