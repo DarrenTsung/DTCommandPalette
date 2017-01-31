@@ -73,6 +73,10 @@ namespace DTCommandPalette {
 
                 var componentsOnActive = Selection.activeGameObject.GetComponents(typeof(UnityEngine.Component));
                 foreach (var component in componentsOnActive) {
+                    if (component == null) {
+                        continue;
+                    }
+
                     var componentType = component.GetType();
                     if (typeHashSet.Contains(componentType)) {
                         continue;
