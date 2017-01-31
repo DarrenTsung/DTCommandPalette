@@ -255,8 +255,8 @@ namespace DTCommandPalette {
                 string maxConsecutive = consecutives.MaxOrDefault(s => s.Length);
                 if (!string.IsNullOrEmpty(maxConsecutive)) {
                     title = title.ReplaceFirst(maxConsecutive, string.Format("</color>{0}<color={1}>", maxConsecutive, colorHex));
-                    title = string.Format("<color={0}>{1}</color>", colorHex, title);
                 }
+                title = string.Format("<color={0}>{1}</color>", colorHex, title);
 
                 if (_debug) {
                     double score = _commandManager.ScoreFor(command, _input);
