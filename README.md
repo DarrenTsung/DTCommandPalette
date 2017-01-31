@@ -13,13 +13,38 @@ Open..
 `%t (Cmd-T on Mac / Control-T on Windows)`
 * Open Scenes
 * Select GameObjects in the Scene
-* Open Prefabs (requires [PrefabSandbox](https://github.com/DarrenTsung/DTPrefabSandbox))
+* Open Prefabs into a sandbox scene (requires [PrefabSandbox](https://github.com/DarrenTsung/DTPrefabSandbox))
 
-![OpenScreenshot](OpenScreenshot.png)
+![CommandPaletteScreenshot](CommandPaletteScreenshot.png)
 
 Command Palette
 
 `%#m (Cmd-Shift-M on Mac / Control-Shift-M on Windows)`
 * Run commands (any method with [MethodCommand] attribute can be run)
 
-![MethodScreenshot](MethodScreenshot.png)
+![CommandPaletteShowoff](CommandPaletteShowoff.gif)
+
+Example (C#):
+```csharp
+using DTCommandPalette;
+using UnityEngine;
+
+public static class ExampleClass {
+  [MethodCommand]
+  public static void DeletePlayerPrefs() {
+    PlayerPrefs.DeleteAll();
+  }
+}
+
+public class ExampleMonoBehaviour : MonoBehaviour {
+  [SerializeField] private Image _image;
+
+  // This method command will only appear if
+  // the currently selected GameObject has an
+  // ExampleMonoBehaviour on it
+  [MethodCommand]
+  public void TurnYellow() {
+    _image.color = Color.yellow;
+  }
+}
+```
