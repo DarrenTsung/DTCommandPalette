@@ -233,21 +233,30 @@ namespace DTCommandPalette {
 
                 string colorHex = EditorGUIUtility.isProSkin ? "#8e8e8e" : "#383838";
 
-                StringBuilder titleStringBuilder = new StringBuilder();
+                StringBuilder consecutiveBuilder = new StringBuilder();
+                List<string> consecutives = new List<string>();
                 bool startedConsecutive = false;
-                bool finishedConsecutive = false;
                 foreach (char c in title) {
-                    if (!finishedConsecutive && inputSet.Contains(char.ToLower(c))) {
+                    if (inputSet.Contains(char.ToLower(c))) {
                         startedConsecutive = true;
-                        titleStringBuilder.Append(c);
+                        consecutiveBuilder.Append(c);
                     } else {
                         if (startedConsecutive) {
-                            finishedConsecutive = true;
+                            consecutives.Add(consecutiveBuilder.ToString());
+                            consecutiveBuilder.Reset();
+                            startedConsecutive = false;
                         }
-                        titleStringBuilder.Append("<color=" + colorHex + ">" + c + "</color>");
                     }
                 }
-                title = titleStringBuilder.ToString();
+
+                // flush whatever is in the string builder
+                consecutives.Add(consecutiveBuilder.ToString());
+
+                string maxConsecutive = consecutives.MaxOrDefault(s => s.Length);
+                if (!string.IsNullOrEmpty(maxConsecutive)) {
+                    title = title.ReplaceFirst(maxConsecutive, string.Format("</color>{0}<color={1}>", maxConsecutive, colorHex));
+                    title = string.Format("<color={0}>{1}</color>", colorHex, title);
+                }
 
                 if (_debug) {
                     double score = _commandManager.ScoreFor(command, _input);
