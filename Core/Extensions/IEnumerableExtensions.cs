@@ -4,28 +4,28 @@ using System.Collections.Generic;
 using UnityEngine;
 
 namespace DTCommandPalette {
-    public static class IEnumerableExtensions {
-        public static IEnumerable<T> Append<T>(this IEnumerable<T> enumerable, T item) {
-            foreach (T elem in enumerable) {
-                yield return elem;
-            }
+	public static class IEnumerableExtensions {
+		public static IEnumerable<T> Append<T>(this IEnumerable<T> enumerable, T item) {
+			foreach (T elem in enumerable) {
+				yield return elem;
+			}
 
-            yield return item;
-        }
+			yield return item;
+		}
 
-        public static T MaxOrDefault<T>(this IEnumerable<T> enumerable, Func<T, int> valueTransformation) {
-            int maxValue = int.MinValue;
-            T maxElem = default(T);
+		public static T MaxOrDefault<T>(this IEnumerable<T> enumerable, Func<T, int> valueTransformation) {
+			int maxValue = int.MinValue;
+			T maxElem = default(T);
 
-            foreach (T elem in enumerable) {
-                int value = valueTransformation.Invoke(elem);
-                if (value > maxValue) {
-                    maxValue = value;
-                    maxElem = elem;
-                }
-            }
+			foreach (T elem in enumerable) {
+				int value = valueTransformation.Invoke(elem);
+				if (value > maxValue) {
+					maxValue = value;
+					maxElem = elem;
+				}
+			}
 
-            return maxElem;
-        }
-    }
+			return maxElem;
+		}
+	}
 }

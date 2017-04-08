@@ -9,18 +9,18 @@ using UnityEditor;
 using UnityEngine;
 
 namespace DTCommandPalette {
-    public static class PlayerSettingsUtil {
-        public static void AddScriptingDefineSymbolIfNotFound(BuildTargetGroup targetGroup, string symbol) {
-            string scriptingDefinesString = PlayerSettings.GetScriptingDefineSymbolsForGroup(targetGroup);
-            List<string> scriptingDefines = new List<string>(scriptingDefinesString.Split(';'));
-            if (scriptingDefines.Contains(symbol)) {
-                return;
-            }
+	public static class PlayerSettingsUtil {
+		public static void AddScriptingDefineSymbolIfNotFound(BuildTargetGroup targetGroup, string symbol) {
+			string scriptingDefinesString = PlayerSettings.GetScriptingDefineSymbolsForGroup(targetGroup);
+			List<string> scriptingDefines = new List<string>(scriptingDefinesString.Split(';'));
+			if (scriptingDefines.Contains(symbol)) {
+				return;
+			}
 
-            scriptingDefines.Add(symbol);
+			scriptingDefines.Add(symbol);
 
-            PlayerSettings.SetScriptingDefineSymbolsForGroup(targetGroup, string.Join(";", scriptingDefines.ToArray()));
-        }
-    }
+			PlayerSettings.SetScriptingDefineSymbolsForGroup(targetGroup, string.Join(";", scriptingDefines.ToArray()));
+		}
+	}
 }
 #endif

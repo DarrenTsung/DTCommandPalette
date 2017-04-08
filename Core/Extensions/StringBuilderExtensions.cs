@@ -5,9 +5,9 @@ using System.Text;
 using UnityEngine;
 
 namespace DTCommandPalette {
-    public static class StringBuilderExtensions {
-        public static void Reset(this StringBuilder stringBuilder) {
-            stringBuilder.Length = 0;
-        }
-    }
+	public static class StringBuilderExtensions {
+		public static void Reset(this StringBuilder stringBuilder) {
+			stringBuilder.Length = 0;
+		}
+	}
 }

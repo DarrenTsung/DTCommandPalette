@@ -4,36 +4,36 @@ using UnityEditor.SceneManagement;
 using UnityEngine;
 
 namespace DTCommandPalette {
-    public class SceneAssetCommand : AssetCommand {
-        private static Texture2D _sceneDisplayIcon;
-        private static Texture2D SceneDisplayIcon {
-            get {
-                if (_sceneDisplayIcon == null) {
-                    _sceneDisplayIcon = AssetDatabase.LoadAssetAtPath(CommandPaletteWindow.ScriptDirectory + "/Icons/SceneIcon.png", typeof(Texture2D)) as Texture2D;
-                }
-                return _sceneDisplayIcon ?? new Texture2D(0, 0);
-            }
-        }
+	public class SceneAssetCommand : AssetCommand {
+		private static Texture2D sceneDisplayIcon_;
+		private static Texture2D SceneDisplayIcon_ {
+			get {
+				if (sceneDisplayIcon_ == null) {
+					sceneDisplayIcon_ = AssetDatabase.LoadAssetAtPath(CommandPaletteWindow.ScriptDirectory + "/Icons/SceneIcon.png", typeof(Texture2D)) as Texture2D;
+				}
+				return sceneDisplayIcon_ ?? new Texture2D(0, 0);
+			}
+		}
 
-        // PRAGMA MARK - ICommand
-        public override Texture2D DisplayIcon {
-            get {
-                return SceneAssetCommand.SceneDisplayIcon;
-            }
-        }
+		// PRAGMA MARK - ICommand
+		public override Texture2D DisplayIcon {
+			get {
+				return SceneDisplayIcon_;
+			}
+		}
 
-        public override void Execute() {
-            if (EditorSceneManager.SaveCurrentModifiedScenesIfUserWantsTo()) {
-                EditorSceneManager.OpenScene(this._path);
-            }
-        }
+		public override void Execute() {
+			if (EditorSceneManager.SaveCurrentModifiedScenesIfUserWantsTo()) {
+				EditorSceneManager.OpenScene(path_);
+			}
+		}
 
 
-        // PRAGMA MARK - Constructors
-        public SceneAssetCommand(string guid) : base(guid) {
-            if (!PathUtil.IsScene(_path)) {
-                throw new ArgumentException("SceneAssetCommand loaded with guid that's not a scene!");
-            }
-        }
-    }
+		// PRAGMA MARK - Constructors
+		public SceneAssetCommand(string guid) : base(guid) {
+			if (!PathUtil.IsScene(path_)) {
+				throw new ArgumentException("SceneAssetCommand loaded with guid that's not a scene!");
+			}
+		}
+	}
 }

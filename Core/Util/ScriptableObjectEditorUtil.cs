@@ -7,23 +7,23 @@ using UnityEditor;
 using UnityEngine;
 
 namespace DTCommandPalette {
-    public static class ScriptableObjectEditorUtil {
-        public static Dictionary<Type, string> _cachedPaths = new Dictionary<Type, string>();
+	public static class ScriptableObjectEditorUtil {
+		public static Dictionary<Type, string> _cachedPaths = new Dictionary<Type, string>();
 
-        public static string PathForScriptableObjectType<T>() where T : ScriptableObject {
-            Type type = typeof(T);
-            if (_cachedPaths.ContainsKey(type)) {
-                return _cachedPaths[type];
-            }
+		public static string PathForScriptableObjectType<T>() where T : ScriptableObject {
+			Type type = typeof(T);
+			if (_cachedPaths.ContainsKey(type)) {
+				return _cachedPaths[type];
+			}
 
-            T instance = ScriptableObject.CreateInstance<T>();
-            MonoScript script = MonoScript.FromScriptableObject(instance);
-            string path = Path.GetDirectoryName(AssetDatabase.GetAssetPath(script));
-            ScriptableObject.DestroyImmediate(instance);
+			T instance = ScriptableObject.CreateInstance<T>();
+			MonoScript script = MonoScript.FromScriptableObject(instance);
+			string path = Path.GetDirectoryName(AssetDatabase.GetAssetPath(script));
+			ScriptableObject.DestroyImmediate(instance);
 
-            _cachedPaths[type] = path;
-            return path;
-        }
-    }
+			_cachedPaths[type] = path;
+			return path;
+		}
+	}
 }
 #endif

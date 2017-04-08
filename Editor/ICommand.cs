@@ -1,26 +1,26 @@
 using UnityEngine;
 
 namespace DTCommandPalette {
-    public interface ICommand {
-        string DisplayTitle {
-            get;
-        }
+	public interface ICommand {
+		string DisplayTitle {
+			get;
+		}
 
-        string DisplayDetailText {
-            get;
-        }
+		string DisplayDetailText {
+			get;
+		}
 
-        Texture2D DisplayIcon {
-            get;
-        }
+		Texture2D DisplayIcon {
+			get;
+		}
 
-        // NOTE (darren): higher sorting priority => higher in list
-        float SortingPriority {
-            get;
-        }
+		// NOTE (darren): higher sorting priority => higher in list
+		float SortingPriority {
+			get;
+		}
 
-        bool IsValid();
+		bool IsValid();
 
-        void Execute();
-    }
+		void Execute();
+	}
 }
