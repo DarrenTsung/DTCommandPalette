@@ -82,18 +82,21 @@ namespace DTCommandPalette {
 		}
 
 		// PRAGMA MARK - Internal
-		protected static string input_ = "";
-		protected static bool focusTrigger_ = false;
-		protected static bool isClosing_ = false;
-		protected static int selectedIndex_ = 0;
-		protected static ICommand[] objects_ = new ICommand[0];
-		protected static CommandManager commandManager_ = null;
-		protected static Color selectedBackgroundColor_ = ColorUtil.HexStringToColor("#4076d3").WithAlpha(0.4f);
+		private static string input_ = "";
+		private static bool focusTrigger_ = false;
+		private static bool isClosing_ = false;
+		private static int selectedIndex_ = 0;
+		private static ICommand[] objects_ = new ICommand[0];
+		private static CommandManager commandManager_ = null;
+		private static Color selectedBackgroundColor_ = ColorUtil.HexStringToColor("#4076d3").WithAlpha(0.4f);
+		private static InProgressCommand inProgressCommand_;
 
-		private static string parsedSearchInput_ = "";
-		private static string[] parsedArguments_ = null;
+		private void OnGUI() {
+			if (inProgressCommand_ != null) {
+				CloseIfNotClosing();
+				return;
+			}
 
-		protected void OnGUI() {
 			Event e = Event.current;
 			switch (e.type) {
 				case EventType.KeyDown:
@@ -131,7 +134,6 @@ namespace DTCommandPalette {
 		}
 
 		private void HandleInputUpdated() {
-			ReparseInput();
 			selectedIndex_ = 0;
 			ReloadObjects();
 		}
@@ -141,25 +143,7 @@ namespace DTCommandPalette {
 				return;
 			}
 
-			objects_ = commandManager_.ObjectsSortedByMatch(parsedSearchInput_);
-		}
-
-		private static void ReparseInput() {
-			if (input_ == null || input_.Length <= 0) {
-				parsedSearchInput_ = "";
-				parsedArguments_ = null;
-				return;
-			}
-
-			string[] parameters = input_.Split(new char[] { ';' }, StringSplitOptions.RemoveEmptyEntries);
-
-			parsedSearchInput_ = parameters[0];
-
-			if (parameters.Length == 1) {
-				parsedArguments_ = null;
-			} else {
-				parsedArguments_ = parameters.Skip(1).ToArray();
-			}
+			objects_ = commandManager_.ObjectsSortedByMatch(input_);
 		}
 
 		private void HandleKeyDownEvent(Event e) {
@@ -284,7 +268,7 @@ namespace DTCommandPalette {
 			CloseIfNotClosing();
 		}
 
-		protected void CloseIfNotClosing() {
+		private void CloseIfNotClosing() {
 			if (!isClosing_) {
 				isClosing_ = true;
 				Close();
@@ -299,23 +283,18 @@ namespace DTCommandPalette {
 
 			ICommand command = objects_[index];
 
-			var parsedArguments = parsedArguments_;
-			EditorApplication.delayCall += () => {
-				if (parsedArguments != null) {
-					ICommandWithArguments castedObj;
-					try {
-						castedObj = (ICommandWithArguments)command;
-						castedObj.Execute(parsedArguments);
-					} catch (InvalidCastException) {
-						Debug.LogWarning("Attempted to pass arguments to CommandObject, but object does not allow arguments!");
-						command.Execute();
-					}
-				} else {
-					command.Execute();
-				}
-			};
+			ICommandWithArguments commandWithArguments = command as ICommandWithArguments;
+			if (commandWithArguments != null) {
+				inProgressCommand_ = new InProgressCommand(commandWithArguments, HandleInProgressCommandFinished);
+			} else {
+				command.Execute();
+			}
 
 			CloseIfNotClosing();
+		}
+
+		private void HandleInProgressCommandFinished() {
+			inProgressCommand_ = null;
 		}
 	}
 }

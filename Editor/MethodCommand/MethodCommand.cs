@@ -54,12 +54,18 @@ namespace DTCommandPalette {
 			return true;
 		}
 
-		public void Execute(object[] args) {
-			ExecuteInteral(args);
-		}
-
 		public void Execute() {
 			ExecuteInteral();
+		}
+
+
+		// PRAGMA MARK - ICommandWithArguments Implementation
+		public ParameterInfo[] Parameters {
+			get { return parameters_ ?? (parameters_ = method_.GetParameters()); }
+		}
+
+		public void Execute(object[] args) {
+			ExecuteInteral(args);
 		}
 
 
@@ -80,9 +86,10 @@ namespace DTCommandPalette {
 
 
 		// PRAGMA MARK - Internal
-		protected MethodInfo method_;
-		protected Type classType_;
-		protected string methodDisplayName_;
+		private MethodInfo method_;
+		private Type classType_;
+		private string methodDisplayName_;
+		private ParameterInfo[] parameters_;
 
 		private void ExecuteInteral(object[] args = null) {
 			args = args ?? new object[0];

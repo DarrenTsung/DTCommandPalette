@@ -1,7 +1,12 @@
 using System;
+using System.Reflection;
 
 namespace DTCommandPalette {
 	public interface ICommandWithArguments : ICommand {
-		void Execute(object[] args = null);
+		ParameterInfo[] Parameters {
+			get;
+		}
+
+		void Execute(object[] args);
 	}
 }
