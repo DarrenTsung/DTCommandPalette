@@ -59,6 +59,11 @@ namespace DTCommandPalette {
 		}
 
 		public static void InitializeWindow(string title, CommandManager commandManager, bool clearInput = false) {
+			if (inProgressCommand_ != null) {
+				Debug.LogWarning("CommandPaletteWindow: Failed to open because of inProgressCommand_!");
+				return;
+			}
+
 			if (commandManager == null) {
 				Debug.LogError("CommandPaletteWindow: Can't initialize a window without a command manager!");
 				return;
@@ -92,11 +97,6 @@ namespace DTCommandPalette {
 		private static InProgressCommand inProgressCommand_;
 
 		private void OnGUI() {
-			if (inProgressCommand_ != null) {
-				CloseIfNotClosing();
-				return;
-			}
-
 			Event e = Event.current;
 			switch (e.type) {
 				case EventType.KeyDown:
