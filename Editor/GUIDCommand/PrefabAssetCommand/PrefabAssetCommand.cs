@@ -3,7 +3,7 @@ using UnityEditor;
 using UnityEngine;
 
 namespace DTCommandPalette {
-	public class PrefabAssetCommand : AssetCommand {
+	public class PrefabAssetCommand : GUIDCommand {
 		public static Action<string> OnPrefabGUIDExecuted;
 
 		private static Texture2D prefabDisplayIcon_;
@@ -18,9 +18,7 @@ namespace DTCommandPalette {
 
 		// PRAGMA MARK - ICommand
 		public override Texture2D DisplayIcon {
-			get {
-				return PrefabDisplayIcon_;
-			}
+			get { return PrefabDisplayIcon_; }
 		}
 
 		public override void Execute() {

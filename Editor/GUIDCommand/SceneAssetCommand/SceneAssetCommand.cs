@@ -4,7 +4,7 @@ using UnityEditor.SceneManagement;
 using UnityEngine;
 
 namespace DTCommandPalette {
-	public class SceneAssetCommand : AssetCommand {
+	public class SceneAssetCommand : GUIDCommand {
 		private static Texture2D sceneDisplayIcon_;
 		private static Texture2D SceneDisplayIcon_ {
 			get {
@@ -17,9 +17,7 @@ namespace DTCommandPalette {
 
 		// PRAGMA MARK - ICommand
 		public override Texture2D DisplayIcon {
-			get {
-				return SceneDisplayIcon_;
-			}
+			get { return SceneDisplayIcon_; }
 		}
 
 		public override void Execute() {

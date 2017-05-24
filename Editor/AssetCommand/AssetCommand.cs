@@ -1,9 +1,10 @@
+using System;
 using System.IO;
 using UnityEditor;
 using UnityEngine;
 
 namespace DTCommandPalette {
-	public abstract class AssetCommand : ICommand {
+	public sealed class AssetCommand<T> : ICommand where T : UnityEngine.Object {
 		// PRAGMA MARK - ICommand
 		public string DisplayTitle {
 			get {
@@ -17,8 +18,8 @@ namespace DTCommandPalette {
 			}
 		}
 
-		public abstract Texture2D DisplayIcon {
-			get;
+		public Texture2D DisplayIcon {
+			get { return null; }
 		}
 
 		public float SortingPriority {
@@ -29,20 +30,29 @@ namespace DTCommandPalette {
 			return true;
 		}
 
-		public abstract void Execute();
+		public void Execute() {
+			executeHandler_.Invoke(asset_);
+		}
 
 
 		// PRAGMA MARK - Constructors
-		public AssetCommand(string guid) {
-			guid_ = guid;
-			path_ = AssetDatabase.GUIDToAssetPath(guid_);
+		public AssetCommand(T asset, Action<T> executeHandler) {
+			if (executeHandler == null) {
+				Debug.LogError("No execute handler for AssetCommand<" + typeof(T).Name + ">!");
+				return;
+			}
+
+			asset_ = asset;
+			executeHandler_ = executeHandler;
+			path_ = AssetDatabase.GetAssetPath(asset_);
 			assetFileName_ = Path.GetFileName(path_);
 		}
 
 
 		// PRAGMA MARK - Internal
-		protected string guid_;
-		protected string assetFileName_;
-		protected string path_;
+		private T asset_;
+		private string path_;
+		private string assetFileName_;
+		private Action<T> executeHandler_;
 	}
 }
