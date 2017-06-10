@@ -11,10 +11,6 @@ namespace DTCommandPalette {
 		}
 
 		public void AddLoader(ICommandLoader loader) {
-			// TODO (darren): what is going on here (why is this not being used)?
-			// I feel like we should be using these object loaders to reload objects on compile?
-			objectLoaders_.Add(loader);
-
 			// Add all objects from loaded into _loadedObjects
 			ICommand[] objects = loader.Load();
 			loadedObjects_.AddRange(objects);
@@ -62,6 +58,5 @@ namespace DTCommandPalette {
 
 		// PRAGMA MARK - Internal
 		private List<ICommand> loadedObjects_ = new List<ICommand>();
-		private List<ICommandLoader> objectLoaders_ = new List<ICommandLoader>();
 	}
 }
