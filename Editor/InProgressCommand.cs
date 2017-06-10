@@ -14,7 +14,7 @@ namespace DTCommandPalette {
 		public InProgressCommand(ICommandWithArguments commandWithArguments, Action onFinishedExecutingCommand) {
 			commandWithArguments_ = commandWithArguments;
 			onFinishedExecutingCommand_ = onFinishedExecutingCommand;
-			arguments_ = new object[commandWithArguments.Parameters.Length];
+			arguments_ = new object[commandWithArguments.Arguments.Length];
 
 			LoopGrabArgument();
 		}
@@ -27,23 +27,23 @@ namespace DTCommandPalette {
 		private object[] arguments_;
 
 		private void LoopGrabArgument() {
-			for (int i = 0; i < commandWithArguments_.Parameters.Length; i++) {
+			for (int i = 0; i < commandWithArguments_.Arguments.Length; i++) {
 				if (arguments_[i] != null) {
 					continue;
 				}
 
 				int index = i;
-				ParameterInfo parameterInfo = commandWithArguments_.Parameters[index];
+				ArgumentInfo argumentInfo = commandWithArguments_.Arguments[index];
 
-				Type parameterType = parameterInfo.ParameterType;
-				TypeConverter converter = TypeDescriptor.GetConverter(parameterType);
+				Type argumentType = argumentInfo.ArgumentType;
+				TypeConverter converter = TypeDescriptor.GetConverter(argumentType);
 				if (!converter.CanConvertFrom(typeof(string))) {
-					Debug.LogWarning("Cannot convert string to type: " + parameterType.Name + " from command: " + commandWithArguments_.DisplayTitle);
+					Debug.LogWarning("Cannot convert string to type: " + argumentType.Name + " from command: " + commandWithArguments_.DisplayTitle);
 					arguments_[i] = new object();
 					continue;
 				}
 
-				CommandPaletteArgumentWindow.Show(string.Format("{0} ({1})", parameterInfo.Name, parameterType.Name), cancelCallback: () => {
+				CommandPaletteArgumentWindow.Show(string.Format("{0} ({1})", argumentInfo.ArgumentName, argumentType.Name), cancelCallback: () => {
 					EditorApplication.delayCall += () => {
 						LoopGrabArgument();
 					};
@@ -52,7 +52,7 @@ namespace DTCommandPalette {
 						try {
 							arguments_[index] = converter.ConvertFrom(input);
 						} catch (Exception) {
-							Debug.LogWarning(string.Format("Could not convert input: {0} into type: {1}! Please try again.", input, parameterType));
+							Debug.LogWarning(string.Format("Could not convert input: {0} into type: {1}! Please try again.", input, argumentType));
 						}
 						LoopGrabArgument();
 					};

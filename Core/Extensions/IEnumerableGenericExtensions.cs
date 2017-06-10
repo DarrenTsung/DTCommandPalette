@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 namespace DTCommandPalette {
-	public static class IEnumerableExtensions {
+	public static class IEnumerableGenericExtensions {
 		public static IEnumerable<T> Append<T>(this IEnumerable<T> enumerable, T item) {
 			foreach (T elem in enumerable) {
 				yield return elem;
@@ -26,6 +26,14 @@ namespace DTCommandPalette {
 			}
 
 			return maxElem;
+		}
+
+		public static IEnumerable<T> ConcatSingle<T>(this IEnumerable<T> enumerable, T addedElem) {
+			foreach (T elem in enumerable) {
+				yield return elem;
+			}
+
+			yield return addedElem;
 		}
 	}
 }

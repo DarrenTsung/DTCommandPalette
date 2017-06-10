@@ -60,8 +60,13 @@ namespace DTCommandPalette {
 
 
 		// PRAGMA MARK - ICommandWithArguments Implementation
-		public ParameterInfo[] Parameters {
-			get { return parameters_ ?? (parameters_ = method_.GetParameters()); }
+		public ArgumentInfo[] Arguments {
+			get {
+				if (arguments_ == null) {
+					arguments_ = method_.GetParameters().Select(p => new ArgumentInfo(p.Name, p.ParameterType)).ToArray();
+				}
+				return arguments_;
+			}
 		}
 
 		public void Execute(object[] args) {
@@ -89,7 +94,7 @@ namespace DTCommandPalette {
 		private MethodInfo method_;
 		private Type classType_;
 		private string methodDisplayName_;
-		private ParameterInfo[] parameters_;
+		private ArgumentInfo[] arguments_;
 
 		private void ExecuteInteral(object[] args = null) {
 			args = args ?? new object[0];

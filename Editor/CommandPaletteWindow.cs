@@ -285,7 +285,7 @@ namespace DTCommandPalette {
 
 			EditorApplication.delayCall += () => {
 				ICommandWithArguments commandWithArguments = command as ICommandWithArguments;
-				if (commandWithArguments != null && commandWithArguments.Parameters.Length > 0) {
+				if (commandWithArguments != null && commandWithArguments.Arguments.Length > 0) {
 					inProgressCommand_ = new InProgressCommand(commandWithArguments, HandleInProgressCommandFinished);
 				} else {
 					command.Execute();
