@@ -7,7 +7,7 @@ using System.Text;
 using UnityEditor;
 using UnityEngine;
 
-namespace DTCommandPalette.DefaultCommands {
+namespace DTCommandPalette.ScriptingDefines {
 	public static class ScriptingDefinesManager {
 		public static BuildTargetGroup CurrentTargetGroup {
 			get { return EditorUserBuildSettings.selectedBuildTargetGroup; }

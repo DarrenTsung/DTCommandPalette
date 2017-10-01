@@ -2,6 +2,8 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
+using DTCommandPalette.ScriptingDefines;
+
 namespace DTCommandPalette.DefaultCommands {
 	public class ScriptingDefineCommandLoader : ICommandLoader {
 		// PRAGMA MARK - Public Interface

@@ -7,6 +7,8 @@ using System.Text;
 using UnityEditor;
 using UnityEngine;
 
+using DTCommandPalette.ScriptingDefines;
+
 namespace DTCommandPalette.DefaultCommands {
 	public static class ScriptingDefinesCommands {
 		[MethodCommand]
