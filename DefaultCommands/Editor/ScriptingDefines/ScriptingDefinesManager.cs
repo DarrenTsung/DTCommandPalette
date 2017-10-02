@@ -33,7 +33,7 @@ namespace DTCommandPalette.ScriptingDefines {
 			}
 
 			scriptingDefines = scriptingDefines.Where(s => s != symbol).ToArray();
-			PlayerSettings.SetScriptingDefineSymbolsForGroup(targetGroup, string.Join(";", scriptingDefines));
+			SetScriptingDefines(targetGroup, scriptingDefines);
 			return true;
 		}
 
@@ -48,8 +48,16 @@ namespace DTCommandPalette.ScriptingDefines {
 			}
 
 			scriptingDefines = scriptingDefines.ConcatSingle(symbol).ToArray();
-			PlayerSettings.SetScriptingDefineSymbolsForGroup(targetGroup, string.Join(";", scriptingDefines));
+			SetScriptingDefines(targetGroup, scriptingDefines);
 			return true;
+		}
+
+
+		// PRAGMA MARK - Internal
+		private static void SetScriptingDefines(BuildTargetGroup targetGroup, string[] scriptingDefines) {
+			string newScriptingDefines = string.Join(";", scriptingDefines);
+			PlayerSettings.SetScriptingDefineSymbolsForGroup(targetGroup, newScriptingDefines);
+			AssetDatabase.SaveAssets();
 		}
 	}
 }
