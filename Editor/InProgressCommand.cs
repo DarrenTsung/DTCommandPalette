@@ -43,17 +43,17 @@ namespace DTCommandPalette {
 					continue;
 				}
 
-				CommandPaletteArgumentWindow.Show(string.Format("{0} ({1})", argumentInfo.ArgumentName, argumentType.Name), cancelCallback: () => {
-					EditorApplication.delayCall += () => {
-						LoopGrabArgument();
-					};
-				}, argumentCallback: (string input) => {
+				CommandPaletteArgumentWindow.Show(string.Format("{0} ({1})", argumentInfo.ArgumentName, argumentType.Name), argumentCallback: (string input) => {
 					EditorApplication.delayCall += () => {
 						try {
 							arguments_[index] = converter.ConvertFrom(input);
 						} catch (Exception) {
 							Debug.LogWarning(string.Format("Could not convert input: {0} into type: {1}! Please try again.", input, argumentType));
 						}
+						LoopGrabArgument();
+					};
+				}, cancelCallback: () => {
+					EditorApplication.delayCall += () => {
 						LoopGrabArgument();
 					};
 				});

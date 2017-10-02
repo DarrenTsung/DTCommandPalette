@@ -19,7 +19,7 @@ namespace DTCommandPalette {
 
 
 		// PRAGMA MARK - Public Interface
-		public static void Show(string title, Action cancelCallback, Action<string> argumentCallback) {
+		public static void Show(string title, Action<string> argumentCallback, Action cancelCallback = null) {
 			cancelCallback_ = cancelCallback;
 			argumentCallback_ = argumentCallback;
 
