@@ -17,6 +17,10 @@ namespace DTCommandPalette.ScriptingDefines {
 			return GetDefinesFor(CurrentTargetGroup);
 		}
 
+		public static void ResetDefinesTo(string[] previousDefines) {
+			SetScriptingDefines(CurrentTargetGroup, previousDefines);
+		}
+
 		public static string[] GetDefinesFor(BuildTargetGroup targetGroup) {
 			string scriptingDefinesString = PlayerSettings.GetScriptingDefineSymbolsForGroup(targetGroup);
 			return scriptingDefinesString.Split(';');
