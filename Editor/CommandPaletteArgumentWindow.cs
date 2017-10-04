@@ -80,12 +80,13 @@ namespace DTCommandPalette {
 		}
 
 		private void ReturnArgument(string argument) {
-			if (argumentCallback_ != null) {
-				argumentCallback_.Invoke(argument);
-				argumentCallback_ = null;
-			}
-			cancelCallback_ = null;
 			CloseIfNotClosing();
+			cancelCallback_ = null;
+			if (argumentCallback_ != null) {
+				var argumentCallback = argumentCallback_;
+				argumentCallback_ = null;
+				argumentCallback.Invoke(argument);
+			}
 		}
 
 		private void OnFocus() {
