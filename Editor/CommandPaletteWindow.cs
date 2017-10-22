@@ -42,7 +42,7 @@ namespace DTCommandPalette {
 		public static void ShowObjectWindow() {
 			var commandManager = new CommandManager();
 			if (!Application.isPlaying) {
-				commandManager.AddLoader(new PrefabAssetCommandLoader());
+				commandManager.AddLoader(new PrefabAssetCommandLoader(PrefabAssetCommand.OnPrefabGUIDExecuted));
 				commandManager.AddLoader(new SceneAssetCommandLoader());
 			}
 			commandManager.AddLoader(new SelectGameObjectCommandLoader());
@@ -56,6 +56,16 @@ namespace DTCommandPalette {
 			commandManager.AddLoader(new MethodCommandLoader());
 
 			InitializeWindow("Command Palette.. ", commandManager);
+		}
+
+		public static void SelectPrefab(string title, Action<GameObject> selectCallback) {
+			var commandManager = new CommandManager();
+			commandManager.AddLoader(new PrefabAssetCommandLoader((guid) => {
+				string assetPath = AssetDatabase.GUIDToAssetPath(guid);
+				GameObject prefab = AssetDatabase.LoadAssetAtPath(assetPath, typeof(GameObject)) as GameObject;
+				selectCallback.Invoke(prefab);
+			}));
+			InitializeWindow(title, commandManager, clearInput: true);
 		}
 
 		public static void InitializeWindow(string title, CommandManager commandManager, bool clearInput = false) {

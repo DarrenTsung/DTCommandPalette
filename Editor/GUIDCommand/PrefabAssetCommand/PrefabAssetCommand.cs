@@ -22,19 +22,25 @@ namespace DTCommandPalette {
 		}
 
 		public override void Execute() {
-			if (OnPrefabGUIDExecuted == null) {
-				Debug.LogError("No action set-up to handle Prefabs Asset Commands!");
+			if (guidCallback_ == null) {
+				Debug.LogError("No guidCallback_ to handle Prefabs Asset Commands!");
 			} else {
-				OnPrefabGUIDExecuted.Invoke(guid_);
+				guidCallback_.Invoke(guid_);
 			}
 		}
 
 
 		// PRAGMA MARK - Constructors
-		public PrefabAssetCommand(string guid) : base(guid) {
+		public PrefabAssetCommand(string guid, Action<string> guidCallback) : base(guid) {
 			if (!PathUtil.IsPrefab(path_)) {
 				throw new ArgumentException("PrefabAssetCommand loaded with guid that's not a prefab!");
 			}
+
+			guidCallback_ = guidCallback;
 		}
+
+
+		// PRAGMA MARK - Internal
+		private Action<string> guidCallback_;
 	}
 }
